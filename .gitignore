@@ -1,0 +1,4 @@
+src/models_cache
+volumes
+.env
+data/documents
