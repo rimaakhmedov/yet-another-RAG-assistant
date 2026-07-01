@@ -1,7 +1,13 @@
 src/models_cache
+src/__pycache__
 volumes
 .env
 data/documents
 pdf_processing.ipynb
-1.3.3
+src/1.3.3
+src/llm_test.py
 __pycache__
+notebooks/retrieve_and_generate.ipynb
+notebooks/models_cache
+notebooks/.deepeval
+src/.deepeval

@@ -7,7 +7,7 @@ from pathlib import Path
 from pymilvus import Function, FunctionType, MilvusClient
 from sentence_transformers import SentenceTransformer
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from generation import generate_answer
+from src.generation import generate_answer
 
 
 def respond(message, chat_history):

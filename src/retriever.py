@@ -1,8 +1,4 @@
-import json
-from sentence_transformers import SentenceTransformer
-from pymilvus import MilvusClient, AnnSearchRequest, Function, FunctionType
-from langchain_milvus import Milvus
-import os
+from pymilvus import AnnSearchRequest
 
 
 def emb_text(text, embedding_model):
@@ -49,7 +45,9 @@ def bm25_search(milvus_client, collection_name, question, sparse_field, output_f
 
 
 
-def hybrid_search(milvus_client, collection_name, question, embedding_model, emb_field, sparse_field, emb_metric, ranker, output_fields):
+def hybrid_search(milvus_client, collection_name, question, embedding_model, 
+                  emb_field, sparse_field, emb_metric, ranker, output_fields):
+    
     dense_req = AnnSearchRequest(
         data=[emb_text(question, embedding_model)],
         anns_field=emb_field,
@@ -63,7 +61,7 @@ def hybrid_search(milvus_client, collection_name, question, embedding_model, emb
         param={"metric_type": "BM25", "params": {}},
         limit=10
     )
-    
+
     hybrid_results = milvus_client.hybrid_search(
         collection_name,
         [dense_req, bm25_req],
@@ -71,9 +69,13 @@ def hybrid_search(milvus_client, collection_name, question, embedding_model, emb
         limit=10,
         output_fields=output_fields
     )
-    
-    retrieved_lines_with_distances = [
-        (res["entity"]["text"], res["distance"]) for res in hybrid_results[0]
+
+    return [
+        {
+            "text": hit["entity"]["text"],
+            "document_name": hit["entity"]["document_name"],
+            "page_number": hit["entity"]["page_number"],
+            "score": hit["distance"]
+        }
+        for hit in hybrid_results[0]
     ]
-    
-    return retrieved_lines_with_distances
